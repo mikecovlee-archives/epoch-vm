@@ -4,9 +4,7 @@
 
 namespace epoch {
 	class type_support;
-	namespace shared {
-		class any;
-	}
+	class any;
 } // namespace epoch
 
 class epoch::any final {

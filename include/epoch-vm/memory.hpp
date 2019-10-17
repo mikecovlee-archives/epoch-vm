@@ -1,10 +1,9 @@
 #pragma once
-#include <covscript/shared/exception.hpp>
+#include <epoch-vm/exception.hpp>
 #include <cstdlib>
 #include <cstddef>
 
-namespace cs {
-	namespace shared {
+namespace epoch {
 		template <typename T>
 		class stack_type final {
 			using aligned_type = typename std::aligned_storage<sizeof(T), std::alignment_of<T>::value>::type;
@@ -222,5 +221,4 @@ namespace cs {
 				mAlloc.deallocate(ptr, 1);
 			}
 		};
-	} // namespace runtime
-} // namespace cs
+} // namespace epoch

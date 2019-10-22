@@ -4,6 +4,7 @@
 
 namespace epoch {
 	class type_support;
+	class any_view;
 	class any;
 } // namespace epoch
 
@@ -291,3 +292,23 @@ public:
 
 template<typename T>
 epoch::any::default_allocator<epoch::any::stor_impl<T>> epoch::any::stor_impl<T>::allocator;
+
+class epoch::any_view final {
+	static any::default_allocator<any> allocator;
+	any* m_ptr = nullptr;
+	bool is_tmp = false;
+public:
+	any_view() = delete;
+	any_view(const any_view&) = default;
+	any_view(any_view&&) noexcept = default;
+	any_view(any val) : m_ptr(allocator.alloc(std::move(val))), is_tmp(true) {}
+	any_view(any& val) : m_ptr(&val), is_tmp(false) {}
+	~any_view() {
+		if(is_tmp)
+			allocator.free(m_ptr);
+	}
+	operator any&() const
+	{
+		return *m_ptr;
+	}
+};

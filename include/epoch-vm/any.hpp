@@ -312,3 +312,5 @@ public:
 		return *m_ptr;
 	}
 };
+
+epoch::any::default_allocator<epoch::any> epoch::any_view::allocator;

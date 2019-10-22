@@ -5,6 +5,8 @@
 #include <cstddef>
 
 #include "utility.hpp"
+#include "memory.hpp"
+#include "any.hpp"
 
 namespace epoch {
 	namespace types {
@@ -14,18 +16,80 @@ namespace epoch {
 		using vm_char = signed char;
 		using vm_string = std::string;
 	}
-	class stack final {
+	class vm_stack final {
 	public:
 		enum class frame_type : std::uint8_t {
 			null, data, scope
 		};
 	private:
-		struct frame_header {
-			frame_type type = frame_type::null;
-			size_t size = 0;
+		struct stack_frame {
+			stack_type<any> field;
+			event_type frame_pop;
+			~stack_frame()
+			{
+				frame_pop.touch(this);
+			}
 		};
-		byte_t *ss = nullptr, *sp = nullptr, *sl = nullptr;
-
+		stack_type<stack_frame> m_stack;
+	public:
+		vm_stack()
+		{
+			push_scope();
+		}
+		vm_stack(const vm_stack&) = delete;
+		~vm_stack() = default;
+		void push_data(any val)
+		{
+			m_stack.top().field.push(std::move(val));
+		}
+		any& top_data()
+		{
+			return m_stack.top().field.top();
+		}
+		const any& top_data() const
+		{
+			return m_stack.top().field.top();
+		}
+		any& access_data(size_t offset)
+		{
+			return m_stack.top().field.at(offset);
+		}
+		const any& access_data(size_t offset) const
+		{
+			return m_stack.top().field.at(offset);
+		}
+		stack_type<any>& access_field(size_t field)
+		{
+			return m_stack.at(field).field;
+		}
+		const stack_type<any>& access_field(size_t field) const
+		{
+			return m_stack.at(field).field;
+		}
+		any& access_data_field(size_t field, size_t offset)
+		{
+			return m_stack.at(field).field.at(offset);
+		}
+		const any& access_data_field(size_t field, size_t offset) const
+		{
+			return m_stack.at(field).field.at(offset);
+		}
+		void pop_data()
+		{
+			m_stack.top().field.pop_no_return();
+		}
+		any pop_data_rt()
+		{
+			return m_stack.top().field.pop();
+		}
+		void push_scope()
+		{
+			m_stack.push();
+		}
+		void pop_scope()
+		{
+			m_stack.pop();
+		}
 	};
 	class instrument_base {
 	public:

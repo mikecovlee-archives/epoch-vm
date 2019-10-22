@@ -99,6 +99,6 @@ namespace epoch {
 		virtual void exec() = 0;
 	};
 	class vm_instance final {
-
+		any_view register_lhs, register_rhs;
 	};
 } // namespace epoch

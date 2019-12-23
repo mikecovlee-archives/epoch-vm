@@ -308,11 +308,15 @@ public:
 		if(is_tmp)
 			allocator.free(m_ptr);
 	}
-	operator any&() const
+	inline any& get() const
 	{
 		if (m_ptr)
 			throw_ex<runtime_error>("Referenced an null any object.");
 		return *m_ptr;
+	}
+	operator any&() const
+	{
+		return get();
 	}
 };
 

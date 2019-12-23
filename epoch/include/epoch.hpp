@@ -2,6 +2,7 @@
 
 #include <unordered_map>
 #include <cstdint>
+#include <vector>
 #include <string>
 #include "any.hpp"
 
@@ -33,31 +34,42 @@ namespace epoch
         vm_instance(size_t stack_s, size_t local_s, size_t frame_s) : stack(stack_s), stack_size(stack_s), local_size(local_s), frame_size(frame_s) {}
         
         // Stack Frame
-        void push_frame();
+        inline void push_frame();
 
-        void pop_frame();
+        inline void pop_frame();
 
         // Variable
-        size_t add_variable(const string&, const any&);
+        size_t add_variable(const string &, const any &);
 
-        void load_variable(size_t);
+        void set_variable_field(map<string, size_t>, std::vector<any>);
 
-        void load_variable(const string &);
+        inline void load_variable(size_t);
+
+        inline void load_variable(const string &);
 
         void load_variable_dyn(const string &);
 
         // Immediate Value
-        void push_int(types::vm_int);
+        inline void push_int(types::vm_int);
 
-        void push_uint(types::vm_uint);
+        inline void push_uint(types::vm_uint);
 
-        void push_char(types::vm_char);
+        inline void push_char(types::vm_char);
 
-        void push_bool(types::vm_bool);
+        inline void push_bool(types::vm_bool);
 
-        void push_float(types::vm_bool);
+        inline void push_float(types::vm_float);
 
-        void push_string(types::vm_string);
+        inline void push_string(types::vm_string);
+
+        // Calculate
+        void cal_add();
+
+        void cal_sub();
+
+        void cal_mul();
+
+        void cal_div();
     };
     class vm_instance_builder final {
 

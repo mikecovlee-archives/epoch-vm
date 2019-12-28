@@ -36,7 +36,7 @@ namespace epoch {
         load_variable(stack.top().local_variables.at(id));
     }
 
-    void vm_instance::load_variable_dyn(const string &id)
+    void vm_instance::search_variable_dyn(const string &id)
     {
         for (auto &frame:stack)
             if (frame.local_variables.count(id) > 0)

@@ -94,7 +94,7 @@ namespace epoch
 
         inline void load_variable(const string &);
 
-        void load_variable_dyn(const string &);
+        void search_variable_dyn(const string &);
 
         // Immediate Value
         inline void push_int(types::vm_int);

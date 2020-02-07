@@ -11,14 +11,61 @@ namespace epoch
     template<typename KeyT, typename ValT> using map = std::unordered_map<KeyT, ValT>;
     using string = std::string;
     using size_t = std::size_t;
-    namespace types {
+    namespace vm_types {
         using vm_int = std::int32_t;
         using vm_uint = std::uint32_t;
         using vm_char = std::int8_t;
-        using vm_bool = std::uint8_t;
+        using vm_bool = std::int8_t;
         using vm_float = double;
         using vm_string = std::string;
+        using vm_any = any;
     }
+
+    template<typename ...> struct sizeof_max;
+
+    template<typename T> struct sizeof_max<T>
+    {
+        static constexpr std::size_t get(std::size_t size = 0)
+        {
+            if (sizeof(T) > size)
+                return sizeof(T);
+            else
+                return size;
+        }
+    };
+
+    template<typename T, typename ...ArgsT> struct sizeof_max<T, ArgsT...>
+    {
+        static constexpr std::size_t get(std::size_t size = 0)
+        {
+            if (sizeof(T) > size)
+                return sizeof_max<ArgsT...>::get(sizeof(T));
+            else
+                return sizeof_max<ArgsT...>::get(size);
+        }
+    };
+
+
+    class vm_object {
+    public:
+        enum class types
+        {
+            vm_null, vm_int, vm_uint, vm_char, vm_bool, vm_float, vm_string, vm_any
+        };
+    private:
+        std::uint8_t data[sizeof_max<vm_types::vm_int, vm_types::vm_uint, vm_types::vm_char, vm_types::vm_bool, vm_types::vm_float, vm_types::vm_string, vm_types::vm_any>::get()];
+        types type = types::vm_null;
+    public:
+        bool is_primitive() const
+        {
+            return type != types::vm_null && type != types::vm_string && type != types::vm_any;
+        }
+        bool is_signed() const
+        {
+            return is_primitive() && type != types::vm_uint;
+        }
+    };
+
     class vm_instance final {
         struct stack_frame {
             map<string, size_t>  local_variables;
